@@ -1,4 +1,6 @@
-public class Jlox {
+package com.craftinginterpreters.lox;
+
+public class Lox {
   final static String PROJECT_NAME = "jlox";
 
   public static void main(String args[]) {
