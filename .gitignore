@@ -80,3 +80,34 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Gradle specific
+.gradle/
+build/
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Avoid ignore Gradle wrappper properties
+!gradle-wrapper.properties
+
+# Cache of project
+.gradletasknamecache
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# IDE specific (if you're occasionally using an IDE)
+*.iml
+*.ipr
+*.iws
+.idea/
+.project
+.classpath
+.settings/
+bin/
+
+# Local build cache
+.gradle/buildOutputCleanup/
