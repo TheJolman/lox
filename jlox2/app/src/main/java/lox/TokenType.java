@@ -23,4 +23,27 @@ enum TokenType {
   GREATER_EQUAL,
   LESS,
   LESS_EQUAL,
+
+  // Literals
+  IDENTIFIER,
+  STRING,
+  NUMBER,
+
+  // Keywords
+  AND,
+  CLASS,
+  ELSE,
+  FUN,
+  FOR,
+  IF,
+  NIL,OR,
+  PRINT,
+  RETURN,
+  SUPER,
+  THIS,
+  TRUE,
+  VAR,
+  WHILE,
+
+  EOF
 }
