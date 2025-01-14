@@ -85,4 +85,42 @@ public class ScannerTest {
     assertEquals(123.7890, tokens.get(1).literal);
   }
 
+  @Test
+  public void testKeywords() {
+    Scanner scanner = new Scanner("and class else if nil or return super while");
+    List<Token> tokens = scanner.scanTokens();
+
+    TokenType[] expectedTypes = {
+      TokenType.AND,
+      TokenType.CLASS,
+      TokenType.ELSE,
+      TokenType.IF,
+      TokenType.NIL,
+      TokenType.OR,
+      TokenType.RETURN,
+      TokenType.SUPER,
+      TokenType.WHILE,
+      TokenType.EOF,
+    };
+
+    assertEquals(expectedTypes.length, tokens.size());
+    for (int i = 0; i < expectedTypes.length; ++i) {
+      assertEquals(expectedTypes[i], tokens.get(i).type);
+    }
+  }
+
+  @Test
+  public void testIdentifiers() {
+    Scanner scanner = new Scanner("words here wow");
+    List<Token> tokens = scanner.scanTokens();
+
+    assertEquals(4, tokens.size());
+    assertEquals(TokenType.IDENTIFIER, tokens.get(0).type);
+    assertEquals("words", tokens.get(0).lexeme);
+    assertEquals(TokenType.IDENTIFIER, tokens.get(1).type);
+    assertEquals("here", tokens.get(1).lexeme);
+    assertEquals(TokenType.IDENTIFIER, tokens.get(2).type);
+    assertEquals("wow", tokens.get(2).lexeme);
+  }
+
 }
