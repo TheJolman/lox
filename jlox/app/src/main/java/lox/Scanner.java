@@ -191,6 +191,10 @@ class Scanner {
     addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
   }
 
+  /**
+   * Consumes string literal.
+   * Multi-line strings OK
+   */
   private void string() {
     while (peek() != '"' && !isAtEnd()) {
       if (peek() == '\n')
