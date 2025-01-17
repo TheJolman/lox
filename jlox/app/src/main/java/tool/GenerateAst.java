@@ -31,7 +31,7 @@ public class GenerateAst {
 
     for (String type : types) {
       String className = type.split(":")[0].trim();
-      String fields = type.split("")[1].trim();
+      String fields = type.split(":")[1].trim();
       defineType(writer, baseName, className, fields);
     }
 
@@ -50,7 +50,7 @@ public class GenerateAst {
     String[] fields = fieldList.split(", ");
     for (String field : fields) {
       String name = field.split(" ")[1];
-      writer.println("    this." + name + " = " + name + ";");
+      writer.println("      this." + name + " = " + name + ";");
     }
 
     writer.println("    }");
