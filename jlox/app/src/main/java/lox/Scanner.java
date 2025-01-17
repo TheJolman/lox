@@ -7,6 +7,11 @@ import java.util.Map;
 
 import static lox.TokenType.*;
 
+/**
+ * Scanner performs lexical analysis on source code, converting raw text into a
+ * sequence
+ * of tokens. Tracks line numbers for error reporting.
+ */
 class Scanner {
   private final String source;
   private final List<Token> tokens = new ArrayList<>();
@@ -14,10 +19,37 @@ class Scanner {
   private int current = 0;
   private int line = 1;
 
+  private static final Map<String, TokenType> keywords;
+
+  static {
+    keywords = new HashMap<>();
+    keywords.put("and", AND);
+    keywords.put("class", CLASS);
+    keywords.put("else", ELSE);
+    keywords.put("false", FALSE);
+    keywords.put("for", FOR);
+    keywords.put("fun", FUN);
+    keywords.put("if", IF);
+    keywords.put("nil", NIL);
+    keywords.put("or", OR);
+    keywords.put("print", PRINT);
+    keywords.put("return", RETURN);
+    keywords.put("super", SUPER);
+    keywords.put("this", THIS);
+    keywords.put("true", TRUE);
+    keywords.put("var", VAR);
+    keywords.put("while", WHILE);
+  }
+
   Scanner(String source) {
     this.source = source;
   }
 
+  /**
+   * Scans all tokens in the source code.
+   *
+   * @return List of tokens found in the source
+   */
   List<Token> scanTokens() {
     while (!isAtEnd()) {
       // at beginning of next lexeme
@@ -29,6 +61,11 @@ class Scanner {
     return tokens;
   }
 
+  /**
+   * Scans a single token from the current position in the source code.
+   * Handles single-char tokens, two char tokens, strings, numbers, and
+   * whitespace.
+   */
   private void scanToken() {
     char c = advance();
     switch (c) {
@@ -76,8 +113,26 @@ class Scanner {
         break;
       case '/':
         if (match('/')) {
-          while (peek() != '\n' && !isAtEnd())  // because of comments
+          while (peek() != '\n' && !isAtEnd()) { // because of comments
             advance();
+          }
+        } else if (match('*')) { // multi-line cmmments
+          boolean foundClosing = false;
+          while (!isAtEnd()) {
+            if (peek() == '\n') {
+              line++;
+            }
+            if (peek() == '*' && peekNext() == '/') {
+              advance();
+              advance();
+              foundClosing = true;
+              break;
+            }
+            advance();
+          }
+          if (isAtEnd() && !foundClosing) {
+            Lox.error(line, "Unterminated multi-line comment.");
+          }
         } else {
           addToken(SLASH);
         }
@@ -91,11 +146,15 @@ class Scanner {
         line++;
         break;
 
-      case '"': string(); break;
+      case '"':
+        string();
+        break;
 
       default:
         if (isDigit(c)) {
           number();
+        } else if (isAlpha(c)) {
+          identifier();
         } else {
           Lox.error(line, "Unexpected character.");
         }
@@ -103,13 +162,43 @@ class Scanner {
     }
   }
 
-  private void number() {
-    while (isDigit(peek())) advance();
+  private void identifier() {
+    while (isAlphaNumeric(peek()))
+      advance();
+
+    String text = source.substring(start, current);
+    TokenType type = keywords.get(text);
+    if (type == null)
+      type = IDENTIFIER;
+    addToken(type);
   }
 
+  /**
+   * Consumes rest of number literal.
+   */
+  private void number() {
+    while (isDigit(peek()))
+      advance();
+
+    if (peek() == '.' && isDigit(peekNext())) {
+      // Consume the "."
+      advance();
+    }
+
+    while (isDigit(peek()))
+      advance();
+
+    addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+  }
+
+  /**
+   * Consumes string literal.
+   * Multi-line strings OK
+   */
   private void string() {
     while (peek() != '"' && !isAtEnd()) {
-      if (peek() == '\n') line++;
+      if (peek() == '\n')
+        line++;
       advance();
     }
 
@@ -124,6 +213,13 @@ class Scanner {
     addToken(STRING, value);
   }
 
+  /**
+   * Checks if the next char matches the expected char.
+   * Used for two-char tokens.
+   *
+   * @param expected The character to match
+   * @return true if the next character matches, false otherwise
+   */
   private boolean match(char expected) {
     if (isAtEnd())
       return false;
@@ -134,10 +230,36 @@ class Scanner {
     return true;
   }
 
+  /**
+   * Returns the next character without advancing the scanner.
+   *
+   * @return The next character or '\0' if at end of source
+   */
   private char peek() {
     if (isAtEnd())
       return '\0';
     return source.charAt(current);
+  }
+
+  /**
+   * Returns the character two ahead without advancing the scanner.
+   *
+   * @return The next next character or '\0' if at end of source
+   */
+  private char peekNext() {
+    if (current + 1 >= source.length())
+      return '\0';
+    return source.charAt(current + 1);
+  }
+
+  private boolean isAlpha(char c) {
+    return (c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        c == '_';
+  }
+
+  private boolean isAlphaNumeric(char c) {
+    return isAlpha(c) || isDigit(c);
   }
 
   private boolean isDigit(char c) {
@@ -148,14 +270,30 @@ class Scanner {
     return current >= source.length();
   }
 
+  /**
+   * Consumes the current character and returns it.
+   *
+   * @return The current character
+   */
   private char advance() {
     return source.charAt(current++);
   }
 
+  /**
+   * Adds a token with no literal value
+   *
+   * @param type The type of token to add
+   */
   private void addToken(TokenType type) {
     addToken(type, null);
   }
 
+  /**
+   * Adds a token with an associated literal value.
+   *
+   * @param type    The type of token to add
+   * @param literal The literal value associated with the token
+   */
   private void addToken(TokenType type, Object literal) {
     String text = source.substring(start, current);
     tokens.add(new Token(type, text, literal, line));
