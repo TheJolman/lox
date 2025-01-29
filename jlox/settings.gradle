@@ -12,4 +12,4 @@ plugins {
 }
 
 rootProject.name = 'jlox'
-include('app')
+include 'app'
