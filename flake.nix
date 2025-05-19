@@ -1,5 +1,5 @@
 {
-  description = "Generic Dev Environment";
+  description = "Dev Environment for 'Crafting Interpreters' book";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -24,10 +24,6 @@
             meson
             ninja
           ];
-
-          shellHook = ''
-            echo "Loaded dev shell."
-          '';
         };
       }
     );

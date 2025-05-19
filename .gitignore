@@ -1,5 +1,6 @@
 .direnv
 builddir/
+build/
 .mesonconfig
 *~
 
