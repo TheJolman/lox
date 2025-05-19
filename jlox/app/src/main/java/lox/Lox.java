@@ -69,6 +69,9 @@ public class Lox {
     }
   }
 
+  /**
+   * Currently prints tokens emitted by scanner
+   */
   private static void run(String source) {
     Scanner scanner = new Scanner(source);
     List<Token> tokens = scanner.scanTokens();
@@ -79,15 +82,19 @@ public class Lox {
     }
   }
 
-  /** Reports an error at a specific line in the source code.
+  /**
+   * Reports an error at a specific line in the source code.
    *
-   * @param line Line number where the error occurred
+   * @param line    Line number where the error occurred
    * @param message Description of the error
    */
   static void error(int line, String message) {
     report(line, "", message);
   }
 
+  /**
+   * Prints error message. Helper for report method.
+   */
   private static void report(int line, String where, String message) {
     System.err.println("[" + line + "] Error" + where + ": " + message);
     hadError = true;

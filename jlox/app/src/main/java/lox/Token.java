@@ -1,5 +1,8 @@
 package lox;
 
+/**
+ * Abstraction for individual tokens.
+ */
 class Token {
   final TokenType type;
   final String lexeme;

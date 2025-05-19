@@ -1,5 +1,8 @@
 package lox;
 
+/**
+ * Enumeration of Lox's lexemes.
+ */
 enum TokenType {
   // Single character tokens
   LEFT_PAREN,
