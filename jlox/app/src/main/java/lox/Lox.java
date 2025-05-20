@@ -93,7 +93,7 @@ public class Lox {
   }
 
   /**
-   * Prints error message. Helper for report method.
+   * Prints error message and sets hadError flag. Helper for report method.
    */
   private static void report(int line, String where, String message) {
     System.err.println("[" + line + "] Error" + where + ": " + message);

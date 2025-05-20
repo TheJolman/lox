@@ -113,16 +113,18 @@ class Scanner {
         break;
       case '/':
         if (match('/')) {
-          while (peek() != '\n' && !isAtEnd()) { // because of comments
+          while (peek() != '\n' && !isAtEnd()) { // single-line comments
             advance();
           }
-        } else if (match('*')) { // multi-line cmmments
+        } else if (match('*')) { // multi-line comments
           boolean foundClosing = false;
           while (!isAtEnd()) {
             if (peek() == '\n') {
               line++;
             }
             if (peek() == '*' && peekNext() == '/') {
+              // NOTE: Should I just just use current += 2 here instead? And current++ for
+              // single-line?
               advance();
               advance();
               foundClosing = true;
@@ -133,7 +135,7 @@ class Scanner {
           if (isAtEnd() && !foundClosing) {
             Lox.error(line, "Unterminated multi-line comment.");
           }
-        } else {
+        } else { // division
           addToken(SLASH);
         }
         break;
@@ -162,6 +164,9 @@ class Scanner {
     }
   }
 
+  /**
+   * Consumes rest of identifier or reserved word.
+   */
   private void identifier() {
     while (isAlphaNumeric(peek()))
       advance();
@@ -180,6 +185,7 @@ class Scanner {
     while (isDigit(peek()))
       advance();
 
+    // Look for fractional part of number.
     if (peek() == '.' && isDigit(peekNext())) {
       // Consume the "."
       advance();
@@ -207,8 +213,9 @@ class Scanner {
       return;
     }
 
-    advance();
+    advance(); // The closing ".
 
+    // Trim the surrounding quotes.
     String value = source.substring(start + 1, current - 1);
     addToken(STRING, value);
   }
@@ -252,20 +259,32 @@ class Scanner {
     return source.charAt(current + 1);
   }
 
+  /**
+   * Checks if 'c' is [a-zA-Z_]
+   */
   private boolean isAlpha(char c) {
     return (c >= 'a' && c <= 'z') ||
         (c >= 'A' && c <= 'Z') ||
         c == '_';
   }
 
+  /**
+   * Checks if 'c' is [a-zA-Z_0-9]
+   */
   private boolean isAlphaNumeric(char c) {
     return isAlpha(c) || isDigit(c);
   }
 
+  /**
+   * Checks if 'c' is [0-9]
+   */
   private boolean isDigit(char c) {
     return c >= '0' && c <= '9';
   }
 
+  /**
+   * Checks if the scanner is at the end of the source string.
+   */
   private boolean isAtEnd() {
     return current >= source.length();
   }
@@ -280,7 +299,7 @@ class Scanner {
   }
 
   /**
-   * Adds a token with no literal value
+   * Adds a token with no literal value.
    *
    * @param type The type of token to add
    */
