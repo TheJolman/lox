@@ -118,6 +118,8 @@ class Parser {
       consume(RIGHT_PAREN, "Expect ')' after expression");
       return new Expr.Grouping(expr);
     }
+
+    throw error(peek(), "Expect expression.");
   }
 
   /**
