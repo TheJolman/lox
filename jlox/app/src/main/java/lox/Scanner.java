@@ -9,8 +9,7 @@ import static lox.TokenType.*;
 
 /**
  * Scanner performs lexical analysis on source code, converting raw text into a
- * sequence
- * of tokens. Tracks line numbers for error reporting.
+ * sequence of tokens. Tracks line numbers for error reporting.
  */
 class Scanner {
   private final String source;
