@@ -5,3 +5,5 @@ Use `java -cp app/build/classes/java/main <package>` to run .class files
 BUG: typing `/*` or `"` in the REPL results in 'Error: Unterminated multi-line comment' or
 'Error: Unterminated string' when their should be multi-line support for both of
 these.
+
+`java -cp app/build/classes/java/main tool.GenerateAst ./app/src/main/java/lox`
