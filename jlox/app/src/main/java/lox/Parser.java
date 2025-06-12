@@ -37,6 +37,18 @@ class Parser {
     return expressionStatement();
   }
 
+  private Stmt printStatement() {
+    Expr value = expression();
+    consume(SEMICOLON, "Expectr ';' after value.");
+    return new Stmt.Print(value);
+  }
+
+  private Stmt expressionStatement() {
+    Expr expr = expression();
+    consume(SEMICOLON, "Expect ';' after expression.");
+    return new Stmt.Expression(expr);
+  }
+
   /**
    * Parses the equality grammar rule
    * equality -> comparison ( ( "!=" | "==" ) comparison )*
