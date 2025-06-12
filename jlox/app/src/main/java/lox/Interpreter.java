@@ -1,5 +1,7 @@
 package lox;
 
+import java.util.List;
+
 class RuntimeError extends RuntimeException {
   final Token token;
 
@@ -9,18 +11,17 @@ class RuntimeError extends RuntimeException {
   }
 }
 
-class Interpreter implements Expr.Visitor<Object> {
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
-  void interpret(Expr expression) {
+  void interpret(List<Stmt> statements) {
     try {
-      Object value = evaluate(expression);
-      System.out.println(stringify(value));
-
+      for (Stmt statement : statements) {
+        execute(statement);
+      }
     } catch (RuntimeError error) {
       Lox.runtimeError(error);
     }
   }
-
 
   @Override
   public Object visitLiteralExpr(Expr.Literal expr) {
@@ -73,12 +74,15 @@ class Interpreter implements Expr.Visitor<Object> {
   }
 
   private String stringify(Object object) {
-    if (object == null) return "nil";
+    if (object == null)
+      return "nil";
 
     if (object instanceof Double) {
       String text = object.toString();
-      /* Java adds .0 to integer valued doubles, but we don't care about that since
-       * Lox only has double precision numbers. */
+      /*
+       * Java adds .0 to integer valued doubles, but we don't care about that since
+       * Lox only has double precision numbers.
+       */
       if (text.endsWith(".0")) {
         text = text.substring(0, text.length() - 2);
       }
@@ -95,6 +99,23 @@ class Interpreter implements Expr.Visitor<Object> {
 
   private Object evaluate(Expr expr) {
     return expr.accept(this);
+  }
+
+  private void execute(Stmt stmt) {
+    stmt.accept(this);
+  }
+
+  @Override
+  public Void visitExpressionStmt(Stmt.Expression stmt) {
+    evaluate(stmt.expression);
+    return null;
+  }
+
+  @Override
+  public Void visitPrintStmt(Stmt.Print stmt) {
+    Object value = evaluate(stmt.expression);
+    System.out.println(stringify(value));
+    return null;
   }
 
   @Override

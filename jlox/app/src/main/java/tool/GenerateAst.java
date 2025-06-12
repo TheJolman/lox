@@ -25,9 +25,8 @@ public class GenerateAst {
         "Unary : Token operator, Expr right"));
 
     defineAst(outputDir, "Stmt", Arrays.asList(
-      "Expression : Expr expression",
-      "Print : Expr expression"
-    ));
+        "Expression : Expr expression",
+        "Print : Expr expression"));
 
     System.out.println("file '" + outputDir + "/Expr.java' successfully generated.");
   }
