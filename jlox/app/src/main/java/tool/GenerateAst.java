@@ -11,26 +11,32 @@ import java.util.List;
 public class GenerateAst {
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {
-      System.err.println("Usage: generate_ast <output directory>");
+      System.err.println("Usage: GenerateAst <output directory>");
       System.exit(64);
+    }
+    if (args[0].equals("-h") || args[0].equals("--help")) {
+      System.out.println("GenerateAst\nUsage: GenerateAst <output directory>");
+      System.exit(0);
     }
     String outputDir = args[0];
     if (outputDir.endsWith("/"))
       outputDir = outputDir.substring(0, outputDir.length() - 1);
 
     defineAst(outputDir, "Expr", Arrays.asList(
+        "Assign : Token name, Expr value",
         "Binary : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
         "Literal : Object value",
         "Unary : Token operator, Expr right",
         "Variable : Token name"));
 
+    System.out.println("File '" + outputDir + "/Expr.java' successfully generated.");
+
     defineAst(outputDir, "Stmt", Arrays.asList(
         "Expression : Expr expression",
         "Print : Expr expression",
         "Var : Token name, Expr initializer"));
 
-    System.out.println("File '" + outputDir + "/Expr.java' successfully generated.");
     System.out.println("File '" + outputDir + "/Stmt.java' successfully generated.");
   }
 
