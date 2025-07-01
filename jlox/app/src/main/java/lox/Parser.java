@@ -37,7 +37,8 @@ class Parser {
    */
   private Stmt declaration() {
     try {
-      if (match(VAR)) return varDeclaration();
+      if (match(VAR))
+        return varDeclaration();
       return statement();
     } catch (ParseError error) {
       synchronize();
@@ -46,7 +47,8 @@ class Parser {
   }
 
   private Stmt statement() {
-    if (match(PRINT)) return printStatement();
+    if (match(PRINT))
+      return printStatement();
 
     return expressionStatement();
   }
@@ -78,6 +80,9 @@ class Parser {
     return new Stmt.Expression(expr);
   }
 
+  /**
+   *
+   */
   private Expr assignment() {
     Expr expr = equality();
 
@@ -86,11 +91,11 @@ class Parser {
       Expr value = assignment();
 
       if (expr instanceof Expr.Variable) {
-        Token name = ((Expr.Variable)expr).name;
+        Token name = ((Expr.Variable) expr).name;
         return new Expr.Assign(name, value);
       }
 
-      error(equals, "Invalid assignemtn target.");
+      error(equals, "Invalid assignemtn target."); // report error but don't throw
     }
     return expr;
   }
